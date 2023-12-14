@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: taskManager
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+#        hbm2ddl:
+#          create_namespaces: true
+#    database: postgresql
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#    generate-ddl: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+#  mvc:
+#    hiddenmethod:
+#      filter:
+#        enabled: true
+
+#springdoc:
+#  swagger-ui:
+#    path: /swagger.html
+
+base-url: /api
+#jwt-secret: 904c3afdffa4742c4d948656b688d45c830ff3d089686777607e5fa4956a6994
