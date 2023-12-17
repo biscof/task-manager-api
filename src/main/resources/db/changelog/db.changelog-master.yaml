@@ -1,0 +1,79 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20231212-create-users-table
+      author: biscof
+      changes:
+        - createTable:
+            tableName:  users
+            columns:
+              - column:
+                  name:  id
+                  type:  bigint
+                  autoIncrement:  true
+                  constraints:
+                    primaryKey:  true
+                    nullable:  false
+              -  column:
+                  name:  first_name
+                  type:  varchar(255)
+              -  column:
+                  name:  last_name
+                  type:  varchar(255)
+              -  column:
+                  name:  email
+                  type:  varchar(255)
+                  constraints:
+                    unique: true
+              -  column:
+                  name: password
+                  type: varchar(255)
+              -  column:
+                  name: role
+                  type: varchar(255)
+              - column:
+                  name: created_at
+                  type: timestamp
+  - changeSet:
+      id: 20231212-create-tasks-table
+      author:  biscof
+      changes:
+        - createTable:
+            tableName:  tasks
+            columns:
+              - column:
+                  name:  id
+                  type:  bigint
+                  autoIncrement:  true
+                  constraints:
+                    primaryKey:  true
+                    nullable:  false
+              -  column:
+                   name:  title
+                   type:  varchar(255)
+                   constraints:
+                     nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: status
+                  type: varchar(255)
+              - column:
+                  name: priority
+                  type: varchar(255)
+              - column:
+                  name: author_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_author
+                    references: users(id)
+              - column:
+                  name: performer_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_performer
+                    references: users(id)
+              - column:
+                  name: created_at
+                  type: timestamp

@@ -15,7 +15,9 @@ spring:
     show-sql: true
     database: h2
 
-#logging:
-#  level:
-#    root: INFO
-#    web: DEBUG
+logging:
+  level:
+    root: INFO
+    web: DEBUG
+
+jwt-secret: 904c3afdffa4742c4d948656b688d45c830ff3d089686777607e5fa4956a6994
