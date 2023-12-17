@@ -27,4 +27,5 @@ public class UserDto {
     @NotBlank(message = "Password can't be empty.")
     @Size(min = 3, message = "Password must be at least three characters long.")
     private String password;
+
 }

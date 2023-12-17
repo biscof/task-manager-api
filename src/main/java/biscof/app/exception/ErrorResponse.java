@@ -12,7 +12,7 @@ import java.util.Date;
 @Setter
 public class ErrorResponse {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss Z", timezone = "UTC")
     private Instant timestamp;
 
     private int code;
