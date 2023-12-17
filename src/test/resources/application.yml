@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: test
+  datasource:
+    url: "jdbc:h2:mem:db"
+    username:
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+base-url: /api
+# mock secret
+jwt-secret: 904c3afdffa4742c4d948656b688d45c830ff3d089686777607e5fa4956a6994
+
