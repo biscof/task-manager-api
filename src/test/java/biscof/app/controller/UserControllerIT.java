@@ -1,6 +1,5 @@
 package biscof.app.controller;
 
-import biscof.app.dto.UserDto;
 import biscof.app.enums.Priority;
 import biscof.app.enums.Status;
 import biscof.app.model.Task;
@@ -9,8 +8,6 @@ import biscof.app.repository.TaskRepository;
 import biscof.app.repository.UserRepository;
 import biscof.app.security.JwtUtils;
 import biscof.app.security.UserDetailsServiceImpl;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.api.DBRider;
@@ -19,17 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -55,7 +48,7 @@ class UserControllerIT {
     private JwtUtils jwtUtils;
 
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Autowired
     private UserRepository userRepository;
@@ -63,13 +56,11 @@ class UserControllerIT {
     @Autowired
     private TaskRepository taskRepository;
 
-//    @Autowired
-//    private TestUtils testUtils;
-
     private static final String BASE_TEST_URL = "/api/users";
-    private static final String MOCK_JWT_SECRET = "904c3afdffa4742c4d948656b688d45c830ff3d089686777607e5fa4956a6994";
+    private static final String TEST_USERNAME = "doe@test.com";
 
     @Test
+    @WithAnonymousUser
     void testCreateUserValidData() throws Exception {
         final String userDtoJson = """
                     {
@@ -93,6 +84,7 @@ class UserControllerIT {
     }
 
     @Test
+    @WithAnonymousUser
     void testCreateUserInvalidData() throws Exception {
         final String userDtoJson = """
                     {
@@ -102,9 +94,6 @@ class UserControllerIT {
                         "password": "jU"
                     }
                 """;
-//        final String invalidFirstNameMsg = "First name must contain at least one character.";
-//        final String invalidEmailMsg = "Invalid email.";
-//        final String invalidPasswordMsg = "Password must be at least three characters long.";
 
         mockMvc.perform(post(BASE_TEST_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -118,21 +107,20 @@ class UserControllerIT {
     }
 
     @Test
-    @WithMockUser(username = "doe@test.com", password = "123456789")
+    @WithMockUser(username = TEST_USERNAME, password = "123456789")
     void testGetUserByValidId() throws Exception {
-        User user = userRepository.findUserByEmail("doe@test.com").orElseThrow();
-//        String jwt = jwtUtils.generateToken(userDetailsService.loadUserByUsername("doe@test.com"));
+        User user = userRepository.findUserByEmail(TEST_USERNAME).orElseThrow();
+//        String jwt = jwtUtils.generateToken(userDetailsServiceImpl.loadUserByUsername(TEST_USERNAME));
 
         mockMvc.perform(get(BASE_TEST_URL + "/" + user.getId()))
-//                        .header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("doe@test.com"))
+                .andExpect(jsonPath("$.email").value(TEST_USERNAME))
                 .andExpect(jsonPath("$.firstName").value("Jane"))
                 .andExpect(jsonPath("$.password").doesNotHaveJsonPath());
     }
 
     @Test
-    @WithMockUser(username = "doe@test.com", password = "123456789")
+    @WithMockUser(username = TEST_USERNAME, password = "123456789")
     void testGetUserByInvalidId() throws Exception {
         final long invalidId = -1L;
         final String userNotFondMsg = "User with ID -1 not found.";
@@ -145,7 +133,16 @@ class UserControllerIT {
     }
 
     @Test
-    @WithMockUser(username = "doe@test.com", password = "123456789")
+    @WithAnonymousUser
+    void testGetUserUnauthorized() throws Exception {
+        User user = userRepository.findUserByEmail(TEST_USERNAME).orElseThrow();
+
+        mockMvc.perform(get(BASE_TEST_URL + "/" + user.getId()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = TEST_USERNAME, password = "123456789")
     void testGetAllUsers() throws Exception {
         mockMvc.perform(get(BASE_TEST_URL))
                 .andExpect(status().isOk())
@@ -156,11 +153,9 @@ class UserControllerIT {
     }
 
     @Test
-    @WithMockUser(username = "doe@test.com", password = "123456789")
     void testUpdateUser() throws Exception {
-        User user = userRepository.findUserByEmail("doe@test.com").orElseThrow();
-//        String jwt = jwtUtils.generateToken(userDetailsService.loadUserByUsername("doe@test.com"));
-
+        User user = userRepository.findUserByEmail(TEST_USERNAME).orElseThrow();
+        String jwt = jwtUtils.generateToken(userDetailsServiceImpl.loadUserByUsername(TEST_USERNAME));
         final String userDtoJson = """
                     {
                         "firstName": "Olga",
@@ -171,7 +166,7 @@ class UserControllerIT {
                 """;
 
         mockMvc.perform(put(BASE_TEST_URL + "/" + user.getId())
-//                        .header("Authorization", "Bearer " + jwt)
+                        .header("Authorization", "Bearer " + jwt)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userDtoJson))
                 .andExpect(status().isOk())
@@ -185,22 +180,22 @@ class UserControllerIT {
     }
 
     @Test
-    @WithMockUser(username = "doe@test.com", password = "123456789")
     void testDeleteUser() throws Exception {
-        User user = userRepository.findUserByEmail("doe@test.com").orElseThrow();
-//        String jwt = jwtUtils.generateToken(userDetailsService.loadUserByUsername("mustermann@test.com"));
+        User user = userRepository.findUserByEmail(TEST_USERNAME).orElseThrow();
+        String jwt = jwtUtils.generateToken(userDetailsServiceImpl.loadUserByUsername(TEST_USERNAME));
 
-        mockMvc.perform(delete(BASE_TEST_URL + "/" + user.getId()))
-//                        .header("Authorization", "Bearer " + jwt))
+        mockMvc.perform(delete(BASE_TEST_URL + "/" + user.getId())
+                        .header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isOk());
 
-        assertTrue(userRepository.findUserByEmail("doe@test.com").isEmpty());
+        assertTrue(userRepository.findUserByEmail(TEST_USERNAME).isEmpty());
     }
 
     @Test
-    @WithMockUser(username = "doe@test.com", password = "123456789")
     void testDeleteUserWithTasks() throws Exception {
-        User user = userRepository.findUserByEmail("doe@test.com").orElseThrow();
+        User user = userRepository.findUserByEmail(TEST_USERNAME).orElseThrow();
+        String jwt = jwtUtils.generateToken(userDetailsServiceImpl.loadUserByUsername(TEST_USERNAME));
+
         Task task = Task.builder()
                 .title("Fix bug")
                 .description("By Friday")
@@ -212,7 +207,8 @@ class UserControllerIT {
         final String errorMessage = String.format(
                 "User with ID %d can't be deleted. There are tasks associated with this user.", user.getId());
 
-        mockMvc.perform(delete(BASE_TEST_URL + "/" + user.getId()))
+        mockMvc.perform(delete(BASE_TEST_URL + "/" + user.getId())
+                        .header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value("CONFLICT"))
                 .andExpect(jsonPath("$.code").value(409))
