@@ -2,9 +2,11 @@ package biscof.app.service.mapper;
 
 import biscof.app.dto.UserDto;
 import biscof.app.dto.UserResponseDto;
+import biscof.app.enums.Role;
 import biscof.app.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 @Mapper(componentModel = "spring")
 public abstract class UserMapper {
 
+    @Autowired
     protected PasswordEncoder passwordEncoder;
 //
 //    @Mapping(target = "rank", expression = "java(calculateRank(link))")
@@ -29,7 +32,7 @@ public abstract class UserMapper {
                 .lastName(userDto.getLastName())
                 .email(userDto.getEmail())
                 .password(passwordEncoder.encode(userDto.getPassword()))
-//                .role(Role.USER)
+                .role(Role.USER)
                 .tasksAuthored(new ArrayList<>())
                 .tasksToDo(new ArrayList<>())
                 .build();

@@ -1,8 +1,11 @@
 package biscof.app.model;
 
+import biscof.app.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -45,19 +48,18 @@ public class User {
 
     private String password;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Instant createdAt;
 
-//    @Enumerated(EnumType.STRING)
-//    private Role role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 //    @Builder.Default()
     @OneToMany(mappedBy = "author")
     private List<Task> tasksAuthored;
 
 //    @Builder.Default
-    @OneToMany(mappedBy = "executor", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "performer", fetch = FetchType.LAZY)
     private List<Task> tasksToDo;
 
 }
