@@ -2,13 +2,15 @@ package biscof.app.service.user;
 
 import biscof.app.dto.UserDto;
 import biscof.app.dto.UserResponseDto;
+import biscof.app.exception.AlreadyExistsException;
 import biscof.app.exception.UserNotFoundException;
 import biscof.app.model.User;
 import biscof.app.repository.UserRepository;
 import biscof.app.exception.DeletionException;
 import biscof.app.service.mapper.UserMapper;
-//import hexlet.code.model.Role;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,11 +43,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto createUser(UserDto userDto) {
+        if (userRepository.findUserByEmail(userDto.getEmail()).isPresent()) {
+            throw new AlreadyExistsException(String.format("User with email %s already exists.", userDto.getEmail()));
+        }
         User user = userMapper.userDtoToUser(userDto);
         return userMapper.userToUserResponseDto(userRepository.save(user));
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     public UserResponseDto updateUser(Long id, UserDto userDto) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException(id)
@@ -58,6 +64,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     public void deleteUser(Long id) {
         Optional<User> user = userRepository.findById(id);
 

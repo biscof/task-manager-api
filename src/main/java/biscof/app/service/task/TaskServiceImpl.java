@@ -7,12 +7,16 @@ import biscof.app.exception.InvalidStatusException;
 import biscof.app.exception.TaskNotFoundException;
 import biscof.app.model.Task;
 import biscof.app.repository.TaskRepository;
+import biscof.app.security.SecurityUtils;
 import biscof.app.service.mapper.TaskMapper;
 import biscof.app.utils.UserUtils;
-//import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.Predicate;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +26,8 @@ public class TaskServiceImpl implements TaskService {
     TaskMapper taskMapper;
     @Autowired
     UserUtils userUtils;
+    @Autowired
+    SecurityUtils securityUtils;
 
     @Override
     public TaskResponseDto getTaskById(Long id) {
@@ -52,6 +58,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @PreAuthorize("@securityUtils.isAuthor(principal.id, #id)")
     public TaskResponseDto updateTask(Long id, TaskDto taskDto) {
         Task task = taskRepository.findById(id).orElseThrow(
                 () -> new TaskNotFoundException(id)
@@ -67,6 +74,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @PreAuthorize("@securityUtils.isAuthor(principal.id, #id) or hasRole('ADMIN')")
     public void deleteTask(Long id) {
         if (taskRepository.findById(id).isPresent()) {
             taskRepository.deleteById(id);
@@ -76,6 +84,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @PreAuthorize("@securityUtils.isAuthor(principal.id, #id) or @securityUtils.isPerformer(principal.id, #id)")
     public TaskResponseDto updateTaskStatus(Long id, String statusStr) {
         Status status;
         try {
@@ -92,6 +101,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @PreAuthorize("@securityUtils.isAuthor(principal.id, #id)")
     public TaskResponseDto updatePerformer(Long id, Long performerId) {
         Task task = taskRepository.findById(id).orElseThrow(
                 () -> new TaskNotFoundException(id)
