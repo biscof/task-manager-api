@@ -20,9 +20,6 @@ public class TaskDto {
 
     private String description;
 
-//    @NotNull(message = "Status field can't be empty.")
-//    private Long taskStatusId;
-
     private Status status;
 
     private Priority priority;

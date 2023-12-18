@@ -2,14 +2,16 @@ package biscof.app.service.task;
 
 import biscof.app.dto.TaskDto;
 import biscof.app.dto.TaskResponseDto;
-//import com.querydsl.core.types.Predicate;
+
+import java.util.List;
+import com.querydsl.core.types.Predicate;
 
 
 public interface TaskService {
 
     TaskResponseDto getTaskById(Long id);
 
-//    List<TaskResponseDto> getTasks(Predicate predicate);
+    List<TaskResponseDto> getTasks(Predicate predicate);
 
     TaskResponseDto createTask(TaskDto taskDto);
 
