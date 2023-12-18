@@ -1,7 +1,7 @@
 package biscof.app.service.mapper;
 
-import biscof.app.dto.UserDto;
-import biscof.app.dto.UserResponseDto;
+import biscof.app.dto.user.UserDto;
+import biscof.app.dto.user.UserResponseDto;
 import biscof.app.enums.Role;
 import biscof.app.model.User;
 import org.mapstruct.Mapper;
@@ -15,14 +15,7 @@ public abstract class UserMapper {
 
     @Autowired
     protected PasswordEncoder passwordEncoder;
-//
-//    @Mapping(target = "rank", expression = "java(calculateRank(link))")
-//    public abstract LinkStatsDto toLinkStatsDto(Link link);
-//
-//    int calculateRank(Link link) {
-//        return repository.findRankByRequestCount(link.getRequestCount());
-//    }
-    public abstract UserDto userToDto(User user);
+
     public abstract UserResponseDto userToUserResponseDto(User user);
 
     public User userDtoToUser(UserDto userDto) {
@@ -34,6 +27,7 @@ public abstract class UserMapper {
                 .role(Role.USER)
                 .tasksAuthored(new ArrayList<>())
                 .tasksToDo(new ArrayList<>())
+                .comments(new ArrayList<>())
                 .build();
     }
 

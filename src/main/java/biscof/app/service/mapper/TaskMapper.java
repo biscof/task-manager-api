@@ -1,27 +1,35 @@
 package biscof.app.service.mapper;
 
-import biscof.app.dto.TaskDto;
-import biscof.app.dto.TaskResponseDto;
+import biscof.app.dto.task.TaskDto;
+import biscof.app.dto.task.TaskResponseDto;
 import biscof.app.model.Task;
-import biscof.app.service.utils.UserUtils;
+import biscof.app.service.utils.ServiceUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
 
 @Mapper(componentModel = "spring")
 public abstract class TaskMapper {
 
     @Autowired
-    UserUtils userUtils;
+    ServiceUtils serviceUtils;
 
-    @Mapping(target = "authorName", expression = "java(userUtils.getUsersFullName(task.getAuthor()))")
-    @Mapping(target = "performerName", expression = "java(userUtils.getUsersFullName(task.getPerformer()))")
+    @Mapping(target = "authorName", expression = "java(serviceUtils.getUsersFullName(task.getAuthor()))")
+    @Mapping(target = "performerName", expression = "java(serviceUtils.getUsersFullName(task.getPerformer()))")
     public abstract TaskResponseDto taskToTaskResponseDto(Task task);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "author", expression = "java(userUtils.getUserFromSecurityContext())")
-    @Mapping(target = "performer", expression = "java(userUtils.getPerformer(taskDto.getPerformerId()))")
-    public abstract Task taskDtoToTask(TaskDto taskDto);
+    public Task taskDtoToTask(TaskDto taskDto) {
+        return Task.builder()
+                .title(taskDto.getTitle())
+                .description(taskDto.getDescription())
+                .status(taskDto.getStatus())
+                .priority(taskDto.getPriority())
+                .author(serviceUtils.getUserFromSecurityContext())
+                .performer(serviceUtils.getPerformer(taskDto.getPerformerId()))
+                .comments(new ArrayList<>())
+                .build();
+    };
 
 }

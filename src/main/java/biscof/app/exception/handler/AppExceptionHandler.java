@@ -1,8 +1,10 @@
 package biscof.app.exception.handler;
 
+import biscof.app.exception.exceptions.AlreadyExistsException;
 import biscof.app.exception.exceptions.AuthException;
-import biscof.app.exception.exceptions.ConflictException;
+import biscof.app.exception.exceptions.CommentNotFoundException;
 import biscof.app.exception.ErrorResponse;
+import biscof.app.exception.exceptions.DeletionException;
 import biscof.app.exception.exceptions.InvalidStatusException;
 import biscof.app.exception.exceptions.TaskNotFoundException;
 import biscof.app.exception.exceptions.UserNotFoundException;
@@ -20,20 +22,9 @@ import java.util.List;
 @ControllerAdvice
 public class AppExceptionHandler {
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFoundException(
-            UserNotFoundException ex,
-            HttpServletRequest request
-    ) {
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI()
-        );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-    }
-
-    @ExceptionHandler(TaskNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleTaskNotFoundException(
-            TaskNotFoundException ex,
+    @ExceptionHandler({ UserNotFoundException.class, TaskNotFoundException.class, CommentNotFoundException.class })
+    public ResponseEntity<ErrorResponse> handleNotFoundException(
+            RuntimeException ex,
             HttpServletRequest request
     ) {
         ErrorResponse errorResponse = new ErrorResponse(
@@ -69,8 +60,8 @@ public class AppExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
-    @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ErrorResponse> handleDeletionException(ConflictException ex, HttpServletRequest request) {
+    @ExceptionHandler({ AlreadyExistsException.class, DeletionException.class })
+    public ResponseEntity<ErrorResponse> handleDeletionException(RuntimeException ex, HttpServletRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI()
         );
@@ -87,15 +78,5 @@ public class AppExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
-
-//    @ExceptionHandler(RuntimeException.class)
-//    public ResponseEntity<ErrorResponse> handleCommonRuntimeException(
-//            HttpServletRequest request
-//    ) {
-//        ErrorResponse errorResponse = new ErrorResponse(
-//                HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", request.getRequestURI()
-//        );
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-//    }
 
 }

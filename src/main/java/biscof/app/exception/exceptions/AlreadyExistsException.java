@@ -1,6 +1,6 @@
 package biscof.app.exception.exceptions;
 
-public class AlreadyExistsException extends ConflictException {
+public class AlreadyExistsException extends RuntimeException {
     public AlreadyExistsException(String msg) {
         super(msg);
     }

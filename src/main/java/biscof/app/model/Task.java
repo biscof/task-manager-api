@@ -5,11 +5,13 @@ import biscof.app.enums.Status;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +21,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "tasks")
@@ -50,6 +53,9 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "performer_id")
     private User performer;
+
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+    private List<Comment> comments;
 
     @CreationTimestamp
     private Instant createdAt;

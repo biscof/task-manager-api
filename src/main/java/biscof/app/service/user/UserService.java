@@ -1,7 +1,7 @@
 package biscof.app.service.user;
 
-import biscof.app.dto.UserDto;
-import biscof.app.dto.UserResponseDto;
+import biscof.app.dto.user.UserDto;
+import biscof.app.dto.user.UserResponseDto;
 
 import java.util.List;
 

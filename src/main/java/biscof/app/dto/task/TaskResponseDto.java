@@ -1,4 +1,4 @@
-package biscof.app.dto;
+package biscof.app.dto.task;
 
 import biscof.app.enums.Priority;
 import biscof.app.enums.Status;

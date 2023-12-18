@@ -1,7 +1,7 @@
 package biscof.app.service.task;
 
-import biscof.app.dto.TaskDto;
-import biscof.app.dto.TaskResponseDto;
+import biscof.app.dto.task.TaskDto;
+import biscof.app.dto.task.TaskResponseDto;
 import biscof.app.enums.Status;
 import biscof.app.exception.exceptions.InvalidStatusException;
 import biscof.app.exception.exceptions.TaskNotFoundException;
@@ -9,8 +9,8 @@ import biscof.app.model.Task;
 import biscof.app.repository.TaskRepository;
 import biscof.app.security.SecurityUtils;
 import biscof.app.service.mapper.TaskMapper;
-import biscof.app.service.utils.UserUtils;
 import com.querydsl.core.types.Predicate;
+import biscof.app.service.utils.ServiceUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +27,7 @@ public class TaskServiceImpl implements TaskService {
     TaskRepository taskRepository;
     TaskMapper taskMapper;
     @Autowired
-    UserUtils userUtils;
+    ServiceUtils serviceUtils;
     @Autowired
     SecurityUtils securityUtils;
 
@@ -64,7 +64,7 @@ public class TaskServiceImpl implements TaskService {
         task.setDescription(taskDto.getDescription());
         task.setStatus(taskDto.getStatus());
         task.setPriority(taskDto.getPriority());
-        task.setPerformer(userUtils.getPerformer(taskDto.getPerformerId()));
+        task.setPerformer(serviceUtils.getPerformer(taskDto.getPerformerId()));
 
         taskRepository.save(task);
         return taskMapper.taskToTaskResponseDto(task);
@@ -103,7 +103,7 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findById(id).orElseThrow(
                 () -> new TaskNotFoundException(id)
         );
-        task.setPerformer(userUtils.getPerformer(performerId));
+        task.setPerformer(serviceUtils.getPerformer(performerId));
         taskRepository.save(task);
         return taskMapper.taskToTaskResponseDto(task);
     }

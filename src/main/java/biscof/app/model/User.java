@@ -29,7 +29,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-//@JsonIgnoreProperties({"password", "role", "tasksAuthored", "tasksToDo"})
 public class User {
 
     @Id
@@ -45,18 +44,19 @@ public class User {
 
     private String password;
 
-    @CreationTimestamp
-    private Instant createdAt;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 
-//    @Builder.Default()
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private List<Task> tasksAuthored;
 
-//    @Builder.Default
     @OneToMany(mappedBy = "performer", fetch = FetchType.LAZY)
     private List<Task> tasksToDo;
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    private List<Comment> comments;
+
+    @CreationTimestamp
+    private Instant createdAt;
 
 }

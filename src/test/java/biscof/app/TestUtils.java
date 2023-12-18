@@ -3,8 +3,10 @@ package biscof.app;
 import biscof.app.enums.Priority;
 import biscof.app.enums.Role;
 import biscof.app.enums.Status;
+import biscof.app.model.Comment;
 import biscof.app.model.Task;
 import biscof.app.model.User;
+import biscof.app.repository.CommentRepository;
 import biscof.app.repository.TaskRepository;
 import biscof.app.repository.UserRepository;
 import biscof.app.security.jwt.JwtUtils;
@@ -23,6 +25,9 @@ public class TestUtils {
 
     @Autowired
     TaskRepository taskRepository;
+
+    @Autowired
+    CommentRepository commentRepository;
 
     @Autowired
     JwtUtils jwtUtils;
@@ -85,6 +90,28 @@ public class TestUtils {
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);
+    }
+
+    public void initComments() {
+        User user1 = userRepository.findUserByEmail("smith@test.com").orElseThrow();
+        User user2 = userRepository.findUserByEmail("petrov@test.com").orElseThrow();
+
+        Task task1 = taskRepository.findTaskByTitle("Fix bugs").orElseThrow();
+        Task task2 = taskRepository.findTaskByTitle("Write tests").orElseThrow();
+
+        Comment comment1 = Comment.builder().title("Great").content("Thank you!")
+                .author(user1).task(task2).build();
+        Comment comment2 = Comment.builder().title("Wow").content("That's cool")
+                .author(user2).task(task2).build();
+        Comment comment3 = Comment.builder().title("Congratulations").content("Great solution")
+                .author(user1).task(task2).build();
+        Comment comment4 = Comment.builder().title("Ok").content("Done!")
+                .author(user2).task(task1).build();
+
+        commentRepository.save(comment1);
+        commentRepository.save(comment2);
+        commentRepository.save(comment3);
+        commentRepository.save(comment4);
     }
 
     public Long getUserIdByEmail(String userEmail) {

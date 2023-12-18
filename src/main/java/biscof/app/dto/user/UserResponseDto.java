@@ -1,4 +1,4 @@
-package biscof.app.dto;
+package biscof.app.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;

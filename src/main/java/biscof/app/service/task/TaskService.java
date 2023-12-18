@@ -1,7 +1,7 @@
 package biscof.app.service.task;
 
-import biscof.app.dto.TaskDto;
-import biscof.app.dto.TaskResponseDto;
+import biscof.app.dto.task.TaskDto;
+import biscof.app.dto.task.TaskResponseDto;
 
 import java.util.List;
 import com.querydsl.core.types.Predicate;
