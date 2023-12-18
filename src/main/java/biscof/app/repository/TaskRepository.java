@@ -8,12 +8,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface TaskRepository extends JpaRepository<Task, Long>
-//        ,
-//        QuerydslPredicateExecutor<Task>
+public interface TaskRepository extends JpaRepository<Task, Long>,
+        QuerydslPredicateExecutor<Task>
 {
 
     Optional<Task> findTaskById(Long id);
 
     Optional<Task> findTaskByTitle(String title);
+
 }

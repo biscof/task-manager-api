@@ -5,13 +5,14 @@ import biscof.app.dto.TaskResponseDto;
 
 import java.util.List;
 import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.Pageable;
 
 
 public interface TaskService {
 
     TaskResponseDto getTaskById(Long id);
 
-    List<TaskResponseDto> getTasks(Predicate predicate);
+    List<TaskResponseDto> getTasks(Predicate predicate, Pageable pageable);
 
     TaskResponseDto createTask(TaskDto taskDto);
 
