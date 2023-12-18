@@ -1,7 +1,10 @@
 package biscof.app.service.utils;
 
+import biscof.app.exception.exceptions.TaskNotFoundException;
 import biscof.app.exception.exceptions.UserNotFoundException;
+import biscof.app.model.Task;
 import biscof.app.model.User;
+import biscof.app.repository.TaskRepository;
 import biscof.app.repository.UserRepository;
 
 import biscof.app.security.userdetails.CustomUserPrincipal;
@@ -10,10 +13,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserUtils {
+public class ServiceUtils {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    TaskRepository taskRepository;
 
     public User getUserFromSecurityContext() {
         return ((CustomUserPrincipal) SecurityContextHolder
@@ -37,6 +43,12 @@ public class UserUtils {
             return "";
         }
         return String.format("%s %s", user.getFirstName(), user.getLastName());
+    }
+
+    public Task getTask(Long id) {
+        return taskRepository.findTaskById(id).orElseThrow(
+                () -> new TaskNotFoundException(id)
+        );
     }
 
 }
