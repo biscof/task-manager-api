@@ -1,10 +1,8 @@
-package biscof.app.security;
+package biscof.app.config;
 
-import biscof.app.security.filter.JwtAuthFilter;
+import biscof.app.security.jwt.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

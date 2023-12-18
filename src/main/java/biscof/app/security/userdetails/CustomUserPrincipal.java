@@ -1,4 +1,4 @@
-package biscof.app.security;
+package biscof.app.security.userdetails;
 
 import biscof.app.model.User;
 import org.springframework.security.core.GrantedAuthority;

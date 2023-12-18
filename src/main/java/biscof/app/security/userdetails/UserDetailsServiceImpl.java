@@ -1,6 +1,6 @@
-package biscof.app.security;
+package biscof.app.security.userdetails;
 
-import biscof.app.exception.UserNotFoundException;
+import biscof.app.exception.exceptions.UserNotFoundException;
 import biscof.app.model.User;
 import biscof.app.repository.UserRepository;
 import lombok.AllArgsConstructor;

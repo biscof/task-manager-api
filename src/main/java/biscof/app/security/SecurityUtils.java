@@ -1,6 +1,6 @@
 package biscof.app.security;
 
-import biscof.app.exception.TaskNotFoundException;
+import biscof.app.exception.exceptions.TaskNotFoundException;
 import biscof.app.model.Task;
 import biscof.app.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;

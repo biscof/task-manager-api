@@ -1,4 +1,4 @@
-package biscof.app.exception;
+package biscof.app.exception.exceptions;
 
 public class TaskNotFoundException extends RuntimeException {
     public TaskNotFoundException(Long id) {

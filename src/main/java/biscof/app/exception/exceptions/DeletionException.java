@@ -1,4 +1,4 @@
-package biscof.app.exception;
+package biscof.app.exception.exceptions;
 
 public class DeletionException extends ConflictException {
     public DeletionException(String msg) {

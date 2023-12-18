@@ -1,4 +1,4 @@
-package biscof.app.security;
+package biscof.app.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -1,9 +1,8 @@
-package biscof.app.security.service;
+package biscof.app.security.login;
 
-import biscof.app.exception.AuthException;
-import biscof.app.security.JwtUtils;
-import biscof.app.security.LoginDto;
-import biscof.app.security.UserDetailsServiceImpl;
+import biscof.app.exception.exceptions.AuthException;
+import biscof.app.security.jwt.JwtUtils;
+import biscof.app.security.userdetails.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;

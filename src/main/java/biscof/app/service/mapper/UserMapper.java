@@ -5,7 +5,6 @@ import biscof.app.dto.UserResponseDto;
 import biscof.app.enums.Role;
 import biscof.app.model.User;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

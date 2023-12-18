@@ -3,7 +3,7 @@ package biscof.app.service.mapper;
 import biscof.app.dto.TaskDto;
 import biscof.app.dto.TaskResponseDto;
 import biscof.app.model.Task;
-import biscof.app.utils.UserUtils;
+import biscof.app.service.utils.UserUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;

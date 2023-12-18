@@ -1,4 +1,4 @@
-package biscof.app.security;
+package biscof.app.security.login;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

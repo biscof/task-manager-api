@@ -2,14 +2,13 @@ package biscof.app.service.user;
 
 import biscof.app.dto.UserDto;
 import biscof.app.dto.UserResponseDto;
-import biscof.app.exception.AlreadyExistsException;
-import biscof.app.exception.UserNotFoundException;
+import biscof.app.exception.exceptions.AlreadyExistsException;
+import biscof.app.exception.exceptions.UserNotFoundException;
 import biscof.app.model.User;
 import biscof.app.repository.UserRepository;
-import biscof.app.exception.DeletionException;
+import biscof.app.exception.exceptions.DeletionException;
 import biscof.app.service.mapper.UserMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

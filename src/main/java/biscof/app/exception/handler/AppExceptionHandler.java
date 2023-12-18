@@ -1,11 +1,11 @@
 package biscof.app.exception.handler;
 
-import biscof.app.exception.AuthException;
-import biscof.app.exception.ConflictException;
+import biscof.app.exception.exceptions.AuthException;
+import biscof.app.exception.exceptions.ConflictException;
 import biscof.app.exception.ErrorResponse;
-import biscof.app.exception.InvalidStatusException;
-import biscof.app.exception.TaskNotFoundException;
-import biscof.app.exception.UserNotFoundException;
+import biscof.app.exception.exceptions.InvalidStatusException;
+import biscof.app.exception.exceptions.TaskNotFoundException;
+import biscof.app.exception.exceptions.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpStatus;

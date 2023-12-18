@@ -1,7 +1,7 @@
 package biscof.app.controller;
 
-import biscof.app.security.LoginDto;
-import biscof.app.security.service.LoginService;
+import biscof.app.security.login.LoginDto;
+import biscof.app.security.login.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

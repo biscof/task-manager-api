@@ -2,7 +2,6 @@ package biscof.app.dto;
 
 import biscof.app.enums.Priority;
 import biscof.app.enums.Status;
-import biscof.app.model.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

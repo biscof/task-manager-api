@@ -1,10 +1,9 @@
 package biscof.app.controller;
 
 import biscof.app.dto.TaskDto;
-import biscof.app.enums.Status;
 import biscof.app.model.Task;
 import biscof.app.service.task.TaskServiceImpl;
-//import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.Predicate;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,7 +14,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,10 +27,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("${base-url}/tasks")
@@ -65,13 +65,15 @@ public class TaskController {
 //        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
 //        @ApiResponse(responseCode = "403", description = "Access forbidden", content = @Content),
 //        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content) })
-//    @GetMapping(path = "")
-//    public List<Task> getTasks(
-////            @Parameter(hidden = true)
-//            @QuerydslPredicate(root = Task.class) Predicate predicate
-//    ) {
-//        return taskService.getTasks(predicate);
-//    }
+    @GetMapping(path = "")
+    public ResponseEntity<Object> getTasks(
+//            @Parameter(hidden = true)
+            @QuerydslPredicate(root = Task.class) Predicate predicate,
+            @PageableDefault(sort = "id") Pageable pageable
+    ) {
+        return ResponseEntity.ok(taskService.getTasks(predicate, pageable));
+    }
+
 
 //    @Operation(summary = "Create a new task")
 //    @ApiResponses(value = {
@@ -115,18 +117,20 @@ public class TaskController {
     public ResponseEntity<Object> updateTaskStatus(
 //            @Parameter(description = "ID of a task to be updated")
             @PathVariable Long id,
-            @RequestParam(name = "status") String status
-            ) {
-        return ResponseEntity.ok(taskService.updateTaskStatus(id, status));
+            @RequestBody Map<String, String> requestBody
+    ) {
+        String newStatus = requestBody.get("status");
+        return ResponseEntity.ok(taskService.updateTaskStatus(id, newStatus));
     }
 
-    @PatchMapping(path = "/{id}")
+    @PatchMapping(path = "/{id}/performer")
     public ResponseEntity<Object> updatePerformer(
 //            @Parameter(description = "ID of a task to be updated")
             @PathVariable Long id,
-            @RequestParam(name = "performerId") Long performerId
+            @RequestBody Map<String, Long> requestBody
     ) {
-        return ResponseEntity.ok(taskService.updatePerformer(id, performerId));
+        Long newPerformerId = requestBody.get("performerId");
+        return ResponseEntity.ok(taskService.updatePerformer(id, newPerformerId));
     }
 
 //    @Operation(summary = "Delete a task by its ID")

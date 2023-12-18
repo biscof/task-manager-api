@@ -2,7 +2,6 @@ package biscof.app.dto;
 
 import biscof.app.enums.Priority;
 import biscof.app.enums.Status;
-import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
