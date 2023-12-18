@@ -1,5 +1,6 @@
 package biscof.app.controller;
 
+import biscof.app.TestUtils;
 import biscof.app.enums.Priority;
 import biscof.app.enums.Status;
 import biscof.app.model.Task;
@@ -21,6 +22,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static biscof.app.TestUtils.TEST_USERNAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,10 +47,7 @@ class UserControllerIT {
     private MockMvc mockMvc;
 
     @Autowired
-    private JwtUtils jwtUtils;
-
-    @Autowired
-    private UserDetailsServiceImpl userDetailsServiceImpl;
+    TestUtils testUtils;
 
     @Autowired
     private UserRepository userRepository;
@@ -57,7 +56,6 @@ class UserControllerIT {
     private TaskRepository taskRepository;
 
     private static final String BASE_TEST_URL = "/api/users";
-    private static final String TEST_USERNAME = "doe@test.com";
 
     @Test
     @WithAnonymousUser
@@ -109,10 +107,7 @@ class UserControllerIT {
     @Test
     @WithMockUser(username = TEST_USERNAME, password = "123456789")
     void testGetUserByValidId() throws Exception {
-        User user = userRepository.findUserByEmail(TEST_USERNAME).orElseThrow();
-//        String jwt = jwtUtils.generateToken(userDetailsServiceImpl.loadUserByUsername(TEST_USERNAME));
-
-        mockMvc.perform(get(BASE_TEST_URL + "/" + user.getId()))
+        mockMvc.perform(get(BASE_TEST_URL + "/" + testUtils.provideMockUser().getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value(TEST_USERNAME))
                 .andExpect(jsonPath("$.firstName").value("Jane"))
@@ -135,9 +130,7 @@ class UserControllerIT {
     @Test
     @WithAnonymousUser
     void testGetUserUnauthorized() throws Exception {
-        User user = userRepository.findUserByEmail(TEST_USERNAME).orElseThrow();
-
-        mockMvc.perform(get(BASE_TEST_URL + "/" + user.getId()))
+        mockMvc.perform(get(BASE_TEST_URL + "/" + testUtils.provideMockUser().getId()))
                 .andExpect(status().isForbidden());
     }
 
@@ -154,8 +147,7 @@ class UserControllerIT {
 
     @Test
     void testUpdateUser() throws Exception {
-        User user = userRepository.findUserByEmail(TEST_USERNAME).orElseThrow();
-        String jwt = jwtUtils.generateToken(userDetailsServiceImpl.loadUserByUsername(TEST_USERNAME));
+        User user = testUtils.provideMockUser();
         final String userDtoJson = """
                     {
                         "firstName": "Olga",
@@ -166,7 +158,7 @@ class UserControllerIT {
                 """;
 
         mockMvc.perform(put(BASE_TEST_URL + "/" + user.getId())
-                        .header("Authorization", "Bearer " + jwt)
+                        .header("Authorization", "Bearer " + testUtils.provideMockJwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userDtoJson))
                 .andExpect(status().isOk())
@@ -181,11 +173,8 @@ class UserControllerIT {
 
     @Test
     void testDeleteUser() throws Exception {
-        User user = userRepository.findUserByEmail(TEST_USERNAME).orElseThrow();
-        String jwt = jwtUtils.generateToken(userDetailsServiceImpl.loadUserByUsername(TEST_USERNAME));
-
-        mockMvc.perform(delete(BASE_TEST_URL + "/" + user.getId())
-                        .header("Authorization", "Bearer " + jwt))
+        mockMvc.perform(delete(BASE_TEST_URL + "/" + testUtils.provideMockUser().getId())
+                        .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
                 .andExpect(status().isOk());
 
         assertTrue(userRepository.findUserByEmail(TEST_USERNAME).isEmpty());
@@ -193,9 +182,7 @@ class UserControllerIT {
 
     @Test
     void testDeleteUserWithTasks() throws Exception {
-        User user = userRepository.findUserByEmail(TEST_USERNAME).orElseThrow();
-        String jwt = jwtUtils.generateToken(userDetailsServiceImpl.loadUserByUsername(TEST_USERNAME));
-
+        User user = testUtils.provideMockUser();
         Task task = Task.builder()
                 .title("Fix bug")
                 .description("By Friday")
@@ -206,9 +193,8 @@ class UserControllerIT {
         taskRepository.save(task);
         final String errorMessage = String.format(
                 "User with ID %d can't be deleted. There are tasks associated with this user.", user.getId());
-
         mockMvc.perform(delete(BASE_TEST_URL + "/" + user.getId())
-                        .header("Authorization", "Bearer " + jwt))
+                        .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value("CONFLICT"))
                 .andExpect(jsonPath("$.code").value(409))
