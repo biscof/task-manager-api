@@ -18,11 +18,13 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,36 +52,56 @@ class TaskControllerIT {
         testUtils.initTasks();
     }
 
-//    @Test
-//    void testGetAllTasks() throws Exception {
-//        mockMvc.perform(get(BASE_TEST_URL)
-//                        .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$").isArray())
-//                .andExpect(jsonPath("$.length()").value(3))
-//                .andExpect(jsonPath("$[0].title").value(TASK_TITLE))
-//                .andExpect(jsonPath("$[1].status").value("PENDING"));
-//    }
+    @Test
+    void testGetAllTasks() throws Exception {
+        mockMvc.perform(get(BASE_TEST_URL)
+                        .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].title").value(TASK_TITLE))
+                .andExpect(jsonPath("$[1].status").value("PENDING"));
+    }
 
-//    @Test
-//    void testGetTasksByParams() throws Exception {
-//        Long taskStatusId = taskStatusRepository.findTaskStatusByName("Cancelled").orElseThrow().getId();
-//        Long labelId = labelRepository.findLabelByName("review").orElseThrow().getId();
-//
-//        MockHttpServletResponse response = mockMvc
-//                .perform(get(String.format("%s?taskStatus=%d&labelsId=%d", BASE_TEST_URL, taskStatusId, labelId)))
-//                .andReturn()
-//                .getResponse();
-//
-//        List<Task> tasks = MAPPER.readValue(response.getContentAsString(), new TypeReference<>() { });
-//
-//        assertEquals(200, response.getStatus());
-//        assertEquals(1, tasks.size());
-//        assertTrue(response.getContentAsString().contains("ivanov@mail.com"));
-//        assertTrue(response.getContentAsString().contains(TASK_TITLE));
-//        assertFalse(response.getContentAsString().contains("moderate"));
-//        assertFalse(response.getContentAsString().contains("Clean up text"));
-//    }
+    @Test
+    void getSecondPage() throws Exception {
+        mockMvc.perform(get(BASE_TEST_URL + "?page=1&size=2")
+                        .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].title").value("Go shopping"))
+                .andExpect(jsonPath("$[0].authorName").value("Ivan Petrov"));
+    }
+
+    @Test
+    void getAllTasksByOneAuthorAndPerformer() throws Exception {
+        Long authorId = testUtils.getUserIdByEmail("smith@test.com");
+        Long performerId = testUtils.getUserIdByEmail("dupont@test.com");
+        String queryString = String.format("?page=0&size=5&authorId=%d&performerId=%d", authorId, performerId);
+        mockMvc.perform(get(
+                BASE_TEST_URL + queryString)
+                        .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].title").value(TASK_TITLE))
+                .andExpect(jsonPath("$[0].authorName").value("Jane Smith"))
+                .andExpect(jsonPath("$[0].performerName").value("Jean Dupont"));
+    }
+
+    @Test
+    void getAllTasksByOneAuthorAndPerformerInvalidId() throws Exception {
+        Long authorId = -1L;
+        Long performerId = -2L;
+        String queryString = String.format("?page=0&size=5&authorId=%d&performerId=%d", authorId, performerId);
+        mockMvc.perform(get(
+                        BASE_TEST_URL + queryString)
+                        .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$").isEmpty());
+    }
 
     @Test
     void testGetTaskByValidId() throws Exception {
@@ -88,7 +110,7 @@ class TaskControllerIT {
                         .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(TASK_TITLE))
-                .andExpect(jsonPath("$.authorName").value("Jane Doe"))
+                .andExpect(jsonPath("$.authorName").value("Jane Smith"))
                 .andExpect(jsonPath("$.performerName").value("Jean Dupont"))
                 .andExpect(jsonPath("$.priority").value("MEDIUM"));
     }
@@ -281,7 +303,7 @@ class TaskControllerIT {
     @Test
     void testUpdateTaskPerformerAuthor() throws Exception {
         Task task = taskRepository.findTaskByTitle(TASK_TITLE).orElseThrow();
-        Long newPerformerId = testUtils.getUserIdByEmail("mustermann@test.com");
+        Long newPerformerId = testUtils.getUserIdByEmail("petrov@test.com");
         String performerJson = String.format("{ \"performerId\": %d }", newPerformerId);
 
         mockMvc.perform(patch(BASE_TEST_URL + "/" + task.getId() + "/performer")
@@ -290,7 +312,7 @@ class TaskControllerIT {
                         .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(TASK_TITLE))
-                .andExpect(jsonPath("$.performerName").value("Max Mustermann"));
+                .andExpect(jsonPath("$.performerName").value("Ivan Petrov"));
 
         assertEquals(newPerformerId, task.getPerformer().getId());
     }

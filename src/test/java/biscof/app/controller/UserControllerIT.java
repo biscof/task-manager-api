@@ -7,8 +7,6 @@ import biscof.app.model.Task;
 import biscof.app.model.User;
 import biscof.app.repository.TaskRepository;
 import biscof.app.repository.UserRepository;
-import biscof.app.security.JwtUtils;
-import biscof.app.security.UserDetailsServiceImpl;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.junit5.api.DBRider;
@@ -62,9 +60,9 @@ class UserControllerIT {
     void testCreateUserValidData() throws Exception {
         final String userDtoJson = """
                     {
-                        "firstName": "John",
-                        "lastName": "Smith",
-                        "email": "smith@test.com",
+                        "firstName": "Andrei",
+                        "lastName": "Ivanov",
+                        "email": "ivanov@test.com",
                         "password": "jUi43#Pn@"
                     }
                 """;
@@ -74,8 +72,8 @@ class UserControllerIT {
                         .content(userDtoJson))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.email").value("smith@test.com"))
+                .andExpect(jsonPath("$.firstName").value("Andrei"))
+                .andExpect(jsonPath("$.email").value("ivanov@test.com"))
                 .andExpect(jsonPath("$.password").doesNotHaveJsonPath())
                 .andExpect(jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(jsonPath("$.id").isNotEmpty());
@@ -87,7 +85,7 @@ class UserControllerIT {
         final String userDtoJson = """
                     {
                         "firstName": "",
-                        "lastName": "Smith",
+                        "lastName": "Ivanov",
                         "email": "@te.c",
                         "password": "jU"
                     }
@@ -142,7 +140,7 @@ class UserControllerIT {
                 .andExpect(jsonPath("$.length()").value(3))
                 .andExpect(jsonPath("$[0].firstName").value("Jane"))
                 .andExpect(jsonPath("$[1].email").value("dupont@test.com"))
-                .andExpect(jsonPath("$[2].lastName").value("Mustermann"));
+                .andExpect(jsonPath("$[2].lastName").value("Petrov"));
     }
 
     @Test

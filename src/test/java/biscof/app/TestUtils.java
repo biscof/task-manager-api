@@ -7,8 +7,8 @@ import biscof.app.model.Task;
 import biscof.app.model.User;
 import biscof.app.repository.TaskRepository;
 import biscof.app.repository.UserRepository;
-import biscof.app.security.JwtUtils;
-import biscof.app.security.UserDetailsServiceImpl;
+import biscof.app.security.jwt.JwtUtils;
+import biscof.app.security.userdetails.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,19 +30,19 @@ public class TestUtils {
     @Autowired
     UserDetailsServiceImpl userDetailsServiceImpl;
 
-    public static final String TEST_USERNAME = "doe@test.com";
+    public static final String TEST_USERNAME = "smith@test.com";
 
 
     public String provideMockJwt() {
-        return jwtUtils.generateToken(userDetailsServiceImpl.loadUserByUsername("doe@test.com"));
+        return jwtUtils.generateToken(userDetailsServiceImpl.loadUserByUsername("smith@test.com"));
     }
 
     public User provideMockUser() {
-        return userRepository.findUserByEmail("doe@test.com").orElseThrow();
+        return userRepository.findUserByEmail("smith@test.com").orElseThrow();
     }
 
     public void initUsers() {
-        User use1 = User.builder().firstName("Jane").lastName("Doe").email("doe@test.com")
+        User use1 = User.builder().firstName("Jane").lastName("Smith").email("smith@test.com")
                 .password("$2a$10$8uB.wxOMwjbQWPtZj2vOGODdtPzHWmkcWMh4hUzW7YQSeVNMsvYb.") // 123456789
                 .role(Role.USER).tasksAuthored(new ArrayList<>()).tasksToDo(new ArrayList<>()).build();
         userRepository.save(use1);
@@ -52,16 +52,16 @@ public class TestUtils {
                 .role(Role.USER).tasksAuthored(new ArrayList<>()).tasksToDo(new ArrayList<>()).build();
         userRepository.save(use2);
 
-        User use3 = User.builder().firstName("Max").lastName("Mustermann").email("mustermann@test.com")
+        User use3 = User.builder().firstName("Ivan").lastName("Petrov").email("petrov@test.com")
                 .password("$2a$10$aqLSjg5fvCImTPkDHifBe.Hj1YVbOBlH1Vjtg97Nu9PsA9aR7VrUa") // ry5H85dn
                 .role(Role.USER).tasksAuthored(new ArrayList<>()).tasksToDo(new ArrayList<>()).build();
         userRepository.save(use3);
     }
 
     public void initTasks() {
-        User user1 = userRepository.findUserByEmail("doe@test.com").orElseThrow();
+        User user1 = userRepository.findUserByEmail("smith@test.com").orElseThrow();
         User user2 = userRepository.findUserByEmail("dupont@test.com").orElseThrow();
-        User user3 = userRepository.findUserByEmail("mustermann@test.com").orElseThrow();
+        User user3 = userRepository.findUserByEmail("petrov@test.com").orElseThrow();
 
         Task task1 = taskRepository.save(
                 Task.builder().title("Fix bugs").description("By Friday").status(Status.NEW)
