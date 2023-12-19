@@ -28,11 +28,11 @@ public class ServiceUtils {
                 .getPrincipal()).getUser();
     }
 
-    public User getPerformer(Long performerId) {
-        if (performerId != null) {
+    public User getExecutor(Long executorId) {
+        if (executorId != null) {
             return userRepository
-                    .findUserById(performerId)
-                    .orElseThrow(() -> new UserNotFoundException(performerId));
+                    .findUserById(executorId)
+                    .orElseThrow(() -> new UserNotFoundException(executorId));
         } else {
             return null;
         }

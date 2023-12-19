@@ -78,6 +78,21 @@ class CommentControllerIT {
     }
 
     @Test
+    void getCommentsByAuthorPaginatedDescending() throws Exception {
+        Long authorId = testUtils.getUserIdByEmail("petrov@test.com");
+        String queryString = String.format("?page=0&size=3&sort=id,desc&authorId=%d", authorId);
+        mockMvc.perform(get(BASE_TEST_URL + queryString)
+                        .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].title").value("Ok"))
+                .andExpect(jsonPath("$[1].title").value("Wow"))
+                .andExpect(jsonPath("$[1].taskTitle").value("Write tests"))
+                .andExpect(jsonPath("$[0].authorName").value("Ivan Petrov"));
+    }
+
+    @Test
     void getAllCommentsByTaskSecondPage() throws Exception {
         Long taskId = taskRepository.findTaskByTitle("Write tests").orElseThrow().getId();
         String queryString = String.format("?page=1&size=2&taskId=%d", taskId);

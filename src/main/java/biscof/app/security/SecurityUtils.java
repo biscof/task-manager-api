@@ -30,8 +30,8 @@ public class SecurityUtils {
         return isAuthorized(principalId, taskId, task -> task.getAuthor().getId());
     }
 
-    public boolean isPerformer(Long principalId, Long taskId) {
-        return isAuthorized(principalId, taskId, task -> task.getPerformer().getId());
+    public boolean isExecutor(Long principalId, Long taskId) {
+        return isAuthorized(principalId, taskId, task -> task.getExecutor().getId());
     }
 
     public boolean isCommentAuthor(Long principalId, Long commentId) {

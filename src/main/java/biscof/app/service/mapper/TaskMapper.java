@@ -17,7 +17,7 @@ public abstract class TaskMapper {
     ServiceUtils serviceUtils;
 
     @Mapping(target = "authorName", expression = "java(serviceUtils.getUsersFullName(task.getAuthor()))")
-    @Mapping(target = "performerName", expression = "java(serviceUtils.getUsersFullName(task.getPerformer()))")
+    @Mapping(target = "executorName", expression = "java(serviceUtils.getUsersFullName(task.getExecutor()))")
     public abstract TaskResponseDto taskToTaskResponseDto(Task task);
 
     public Task taskDtoToTask(TaskDto taskDto) {
@@ -27,7 +27,7 @@ public abstract class TaskMapper {
                 .status(taskDto.getStatus())
                 .priority(taskDto.getPriority())
                 .author(serviceUtils.getUserFromSecurityContext())
-                .performer(serviceUtils.getPerformer(taskDto.getPerformerId()))
+                .executor(serviceUtils.getExecutor(taskDto.getExecutorId()))
                 .comments(new ArrayList<>())
                 .build();
     };

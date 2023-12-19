@@ -28,7 +28,7 @@ public class TaskResponseDto {
 
     private String authorName;
 
-    private String performerName;
+    private String executorName;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss Z", timezone = "UTC")
     private Instant createdAt;

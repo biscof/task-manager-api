@@ -75,10 +75,10 @@ class TaskControllerIT {
     }
 
     @Test
-    void getAllTasksByOneAuthorAndPerformer() throws Exception {
+    void getAllTasksByOneAuthorAndExecutor() throws Exception {
         Long authorId = testUtils.getUserIdByEmail("smith@test.com");
-        Long performerId = testUtils.getUserIdByEmail("dupont@test.com");
-        String queryString = String.format("?page=0&size=5&authorId=%d&performerId=%d", authorId, performerId);
+        Long executorId = testUtils.getUserIdByEmail("dupont@test.com");
+        String queryString = String.format("?page=0&size=5&authorId=%d&executorId=%d", authorId, executorId);
         mockMvc.perform(get(
                 BASE_TEST_URL + queryString)
                         .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
@@ -87,14 +87,14 @@ class TaskControllerIT {
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].title").value(TASK_TITLE))
                 .andExpect(jsonPath("$[0].authorName").value("Jane Smith"))
-                .andExpect(jsonPath("$[0].performerName").value("Jean Dupont"));
+                .andExpect(jsonPath("$[0].executorName").value("Jean Dupont"));
     }
 
     @Test
-    void getAllTasksByOneAuthorAndPerformerInvalidId() throws Exception {
+    void getAllTasksByOneAuthorAndExecutorInvalidId() throws Exception {
         Long authorId = -1L;
-        Long performerId = -2L;
-        String queryString = String.format("?page=0&size=5&authorId=%d&performerId=%d", authorId, performerId);
+        Long executorId = -2L;
+        String queryString = String.format("?page=0&size=5&authorId=%d&executorId=%d", authorId, executorId);
         mockMvc.perform(get(
                         BASE_TEST_URL + queryString)
                         .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
@@ -111,7 +111,7 @@ class TaskControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(TASK_TITLE))
                 .andExpect(jsonPath("$.authorName").value("Jane Smith"))
-                .andExpect(jsonPath("$.performerName").value("Jean Dupont"))
+                .andExpect(jsonPath("$.executorName").value("Jean Dupont"))
                 .andExpect(jsonPath("$.priority").value("MEDIUM"));
     }
 
@@ -144,7 +144,7 @@ class TaskControllerIT {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("Fix bug"))
                 .andExpect(jsonPath("$.id").isNotEmpty())
-                .andExpect(jsonPath("$.performerName").isEmpty());
+                .andExpect(jsonPath("$.executorName").isEmpty());
 
         Optional<Task> testTask = taskRepository.findTaskByTitle("Fix bug");
         assertTrue(testTask.isPresent());
@@ -200,10 +200,10 @@ class TaskControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Write a letter"))
                 .andExpect(jsonPath("$.status").value("IN_PROCESS"))
-                .andExpect(jsonPath("$.performerName").isEmpty());
+                .andExpect(jsonPath("$.executorName").isEmpty());
 
         assertNull(task.getDescription());
-        assertNull(task.getPerformer());
+        assertNull(task.getExecutor());
         assertEquals("Write a letter", task.getTitle());
     }
 
@@ -273,7 +273,7 @@ class TaskControllerIT {
     }
 
     @Test
-    void testUpdateTaskStatusPerformer() throws Exception {
+    void testUpdateTaskStatusExecutor() throws Exception {
         Task task = taskRepository.findTaskByTitle("Go shopping").orElseThrow();
         String statusJson = "{ \"status\": \"PENDING\" }";
 
@@ -289,7 +289,7 @@ class TaskControllerIT {
     }
 
     @Test
-    void testUpdateTaskStatusAuthenticatedNotAuthorNotPerformer() throws Exception {
+    void testUpdateTaskStatusAuthenticatedNotAuthorNotExecutor() throws Exception {
         Task task = taskRepository.findTaskByTitle("Write tests").orElseThrow();
         String statusJson = "{ \"status\": \"IN_PROCESS\" }";
 
@@ -301,30 +301,30 @@ class TaskControllerIT {
     }
 
     @Test
-    void testUpdateTaskPerformerAuthor() throws Exception {
+    void testUpdateTaskExecutorAuthor() throws Exception {
         Task task = taskRepository.findTaskByTitle(TASK_TITLE).orElseThrow();
-        Long newPerformerId = testUtils.getUserIdByEmail("petrov@test.com");
-        String performerJson = String.format("{ \"performerId\": %d }", newPerformerId);
+        Long newExecutorId = testUtils.getUserIdByEmail("petrov@test.com");
+        String executorJson = String.format("{ \"executorId\": %d }", newExecutorId);
 
-        mockMvc.perform(patch(BASE_TEST_URL + "/" + task.getId() + "/performer")
+        mockMvc.perform(patch(BASE_TEST_URL + "/" + task.getId() + "/executor")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(performerJson)
+                        .content(executorJson)
                         .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(TASK_TITLE))
-                .andExpect(jsonPath("$.performerName").value("Ivan Petrov"));
+                .andExpect(jsonPath("$.executorName").value("Ivan Petrov"));
 
-        assertEquals(newPerformerId, task.getPerformer().getId());
+        assertEquals(newExecutorId, task.getExecutor().getId());
     }
 
     @Test
-    void testUpdateTaskPerformerAuthenticatedNotAuthor() throws Exception {
+    void testUpdateTaskExecutorAuthenticatedNotAuthor() throws Exception {
         Task task = taskRepository.findTaskByTitle("Write tests").orElseThrow();
-        Long newPerformerId = testUtils.getUserIdByEmail("dupont@test.com");
-        String performerJson = String.format("{ \"performerId\": %d }", newPerformerId);
-        mockMvc.perform(patch(BASE_TEST_URL + "/" + task.getId() + "/performer")
+        Long newExecutorId = testUtils.getUserIdByEmail("dupont@test.com");
+        String executorJson = String.format("{ \"executorId\": %d }", newExecutorId);
+        mockMvc.perform(patch(BASE_TEST_URL + "/" + task.getId() + "/executor")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(performerJson)
+                        .content(executorJson)
                         .header("Authorization", "Bearer " + testUtils.provideMockJwt()))
                 .andExpect(status().isForbidden());
     }

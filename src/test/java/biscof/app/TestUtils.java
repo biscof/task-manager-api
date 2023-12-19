@@ -70,15 +70,15 @@ public class TestUtils {
 
         Task task1 = taskRepository.save(
                 Task.builder().title("Fix bugs").description("By Friday").status(Status.NEW)
-                        .priority(Priority.MEDIUM).author(user1).performer(user2).build()
+                        .priority(Priority.MEDIUM).author(user1).executor(user2).build()
         );
         Task task2 = taskRepository.save(
                 Task.builder().title("Write tests").description("By tomorrow").status(Status.PENDING)
-                        .priority(Priority.HIGH).author(user2).performer(user3).build()
+                        .priority(Priority.HIGH).author(user2).executor(user3).build()
         );
         Task task3 = taskRepository.save(
                 Task.builder().title("Go shopping").status(Status.COMPLETED)
-                        .priority(Priority.LOW).author(user3).performer(user1).build()
+                        .priority(Priority.LOW).author(user3).executor(user1).build()
         );
 
         user1.getTasksAuthored().add(task1);

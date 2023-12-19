@@ -69,10 +69,10 @@ databaseChangeLog:
                     foreignKeyName: fk_task_author
                     references: users(id)
               - column:
-                  name: performer_id
+                  name: executor_id
                   type: bigint
                   constraints:
-                    foreignKeyName: fk_task_performer
+                    foreignKeyName: fk_task_executor
                     references: users(id)
               - column:
                   name: created_at

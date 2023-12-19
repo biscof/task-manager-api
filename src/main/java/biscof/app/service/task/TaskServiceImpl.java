@@ -64,7 +64,7 @@ public class TaskServiceImpl implements TaskService {
         task.setDescription(taskDto.getDescription());
         task.setStatus(taskDto.getStatus());
         task.setPriority(taskDto.getPriority());
-        task.setPerformer(serviceUtils.getPerformer(taskDto.getPerformerId()));
+        task.setExecutor(serviceUtils.getExecutor(taskDto.getExecutorId()));
 
         taskRepository.save(task);
         return taskMapper.taskToTaskResponseDto(task);
@@ -81,7 +81,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @PreAuthorize("@securityUtils.isAuthor(principal.id, #id) or @securityUtils.isPerformer(principal.id, #id)")
+    @PreAuthorize("@securityUtils.isAuthor(principal.id, #id) or @securityUtils.isExecutor(principal.id, #id)")
     public TaskResponseDto updateTaskStatus(Long id, String statusStr) {
         Status status;
         try {
@@ -99,11 +99,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @PreAuthorize("@securityUtils.isAuthor(principal.id, #id)")
-    public TaskResponseDto updatePerformer(Long id, Long performerId) {
+    public TaskResponseDto updateExecutor(Long id, Long executorId) {
         Task task = taskRepository.findById(id).orElseThrow(
                 () -> new TaskNotFoundException(id)
         );
-        task.setPerformer(serviceUtils.getPerformer(performerId));
+        task.setExecutor(serviceUtils.getExecutor(executorId));
         taskRepository.save(task);
         return taskMapper.taskToTaskResponseDto(task);
     }

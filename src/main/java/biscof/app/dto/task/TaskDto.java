@@ -23,6 +23,6 @@ public class TaskDto {
 
     private Priority priority;
 
-    private Long performerId;
+    private Long executorId;
 
 }

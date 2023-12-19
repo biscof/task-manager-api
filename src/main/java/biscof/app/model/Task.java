@@ -51,8 +51,8 @@ public class Task {
     private User author;
 
     @ManyToOne
-    @JoinColumn(name = "performer_id")
-    private User performer;
+    @JoinColumn(name = "executor_id")
+    private User executor;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
     private List<Comment> comments;

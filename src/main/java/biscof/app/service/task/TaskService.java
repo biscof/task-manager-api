@@ -22,5 +22,5 @@ public interface TaskService {
 
     TaskResponseDto updateTaskStatus(Long id, String status);
 
-    TaskResponseDto updatePerformer(Long id, Long performerId);
+    TaskResponseDto updateExecutor(Long id, Long executorId);
 }

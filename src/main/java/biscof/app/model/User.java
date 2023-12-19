@@ -50,7 +50,7 @@ public class User {
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private List<Task> tasksAuthored;
 
-    @OneToMany(mappedBy = "performer", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "executor", fetch = FetchType.LAZY)
     private List<Task> tasksToDo;
 
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)

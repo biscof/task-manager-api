@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ import java.util.List;
 public class AppExceptionHandler {
 
     @ExceptionHandler({ UserNotFoundException.class, TaskNotFoundException.class, CommentNotFoundException.class })
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorResponse> handleNotFoundException(
             RuntimeException ex,
             HttpServletRequest request
@@ -34,6 +36,7 @@ public class AppExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<List<ErrorResponse>> handleValidationExceptions(
             MethodArgumentNotValidException ex,
             HttpServletRequest request
@@ -50,6 +53,7 @@ public class AppExceptionHandler {
     }
 
     @ExceptionHandler(AuthException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<ErrorResponse> handleAuthException(
             AuthException ex,
             HttpServletRequest request
@@ -61,6 +65,7 @@ public class AppExceptionHandler {
     }
 
     @ExceptionHandler({ AlreadyExistsException.class, DeletionException.class })
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<ErrorResponse> handleDeletionException(RuntimeException ex, HttpServletRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI()
@@ -69,6 +74,7 @@ public class AppExceptionHandler {
     }
 
     @ExceptionHandler(InvalidStatusException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponse> handleInvalidStatusException(
             ConversionFailedException ex,
             HttpServletRequest request
