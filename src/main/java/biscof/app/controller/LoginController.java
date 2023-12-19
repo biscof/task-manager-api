@@ -4,6 +4,7 @@ import biscof.app.security.login.LoginDto;
 import biscof.app.security.login.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class LoginController {
     )
     @PostMapping("/login")
     public ResponseEntity<Object> login(
+            @Schema(implementation = LoginDto.class)
             @RequestBody LoginDto request
     ) {
         return ResponseEntity.ok(loginService.login(request));

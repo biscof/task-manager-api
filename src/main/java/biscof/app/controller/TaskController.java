@@ -92,6 +92,7 @@ public class TaskController {
     )
     @PostMapping(path = "")
     public ResponseEntity<Object> createTask(
+            @Schema(implementation = TaskDto.class)
             @Valid @RequestBody TaskDto taskDto
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(taskDto));
@@ -112,6 +113,7 @@ public class TaskController {
     public ResponseEntity<Object> updateTask(
             @Parameter(description = "ID of a task to be updated")
             @PathVariable Long id,
+            @Schema(implementation = TaskDto.class)
             @Valid @RequestBody TaskDto taskDto
     ) {
         return ResponseEntity.ok(taskService.updateTask(id, taskDto));
@@ -132,6 +134,7 @@ public class TaskController {
     public ResponseEntity<Object> updateTaskStatus(
             @Parameter(description = "ID of a task to be updated")
             @PathVariable Long id,
+            @Schema(description = "Request body containing the new status")
             @RequestBody Map<String, String> requestBody
     ) {
         String newStatus = requestBody.get("status");
@@ -153,6 +156,7 @@ public class TaskController {
     public ResponseEntity<Object> updateExecutor(
             @Parameter(description = "ID of a task to be updated")
             @PathVariable Long id,
+            @Schema(description = "Request body containing the new task executor ID")
             @RequestBody Map<String, Long> requestBody
     ) {
         Long newExecutorId = requestBody.get("executorId");

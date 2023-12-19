@@ -89,6 +89,7 @@ public class CommentController {
     )
     @PostMapping(path = "")
     public ResponseEntity<Object> createComment(
+            @Schema(implementation = CommentDto.class)
             @Valid @RequestBody CommentDto commentDto
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.createComment(commentDto));
@@ -109,6 +110,7 @@ public class CommentController {
     public ResponseEntity<Object> updateComment(
             @Parameter(description = "ID of a comment to be updated")
             @PathVariable Long id,
+            @Schema(implementation = CommentDto.class)
             @Valid @RequestBody CommentDto commentDto
     ) {
         return ResponseEntity.ok(commentService.updateComment(id, commentDto));

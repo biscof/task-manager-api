@@ -69,6 +69,7 @@ public class UserController {
     )
     @PostMapping(path = "")
     public ResponseEntity<Object> createUser(
+            @Schema(implementation = UserDto.class)
             @Valid @RequestBody UserDto userDto
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDto));
@@ -89,6 +90,7 @@ public class UserController {
     public ResponseEntity<Object> updateUser(
             @Parameter(description = "ID of a user to be updated")
             @PathVariable Long id,
+            @Schema(implementation = UserDto.class)
             @Valid @RequestBody UserDto userDto
     ) {
         return ResponseEntity.ok(userService.updateUser(id, userDto));
