@@ -17,8 +17,10 @@ spring:
 #      filter:
 #        enabled: true
 
-#springdoc:
-#  swagger-ui:
-#    path: /swagger.html
+springdoc:
+  api-docs:
+    path: /docs/v3/api-docs
+  swagger-ui:
+    path: /docs/swagger.html
 
 base-url: /api

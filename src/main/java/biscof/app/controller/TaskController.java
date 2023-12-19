@@ -1,12 +1,14 @@
 package biscof.app.controller;
 
-import biscof.app.dto.TaskDto;
+import biscof.app.dto.task.TaskDto;
+import biscof.app.dto.task.TaskResponseDto;
 import biscof.app.model.Task;
 import biscof.app.service.task.TaskServiceImpl;
 import com.querydsl.core.types.Predicate;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,53 +40,56 @@ public class TaskController {
     @Autowired
     private TaskServiceImpl taskService;
 
-//    @Operation(summary = "Get a task by ID")
-//    @ApiResponses(value = {
-//        @ApiResponse(responseCode = "200", description = "Task successfully found",
-//                content = { @Content(mediaType = "application/json",
-//                        schema = @Schema(implementation = Task.class)) }),
-//        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-//        @ApiResponse(responseCode = "403", description = "Access forbidden", content = @Content),
-//        @ApiResponse(responseCode = "404", description = "Task not found",
-//                content = { @Content(mediaType = "application/json",
-//                        schema = @Schema(implementation = String.class)) }),
-//        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content) })
+    @Operation(summary = "Get a task by ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Task successfully found",
+                content = { @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = TaskResponseDto.class)) }),
+        @ApiResponse(responseCode = "403", description = "Access forbidden", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Task not found",
+                content = { @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = String.class)) }) }
+    )
     @GetMapping(path = "/{id}")
     public ResponseEntity<Object> getTaskById(
-//            @Parameter(description = "ID of a task to be searched")
+            @Parameter(description = "ID of a task to be searched")
             @PathVariable Long id
     ) {
         return ResponseEntity.ok().body(taskService.getTaskById(id));
     }
 
-//    @Operation(summary = "Get all tasks")
-//    @ApiResponses(value = {
-//        @ApiResponse(responseCode = "200", description = "Tasks found",
-//                content = { @Content(mediaType = "application/json",
-//                        array = @ArraySchema(schema = @Schema(implementation = Task.class))) }),
-//        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-//        @ApiResponse(responseCode = "403", description = "Access forbidden", content = @Content),
-//        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content) })
+    @Operation(summary = "Get all tasks")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Tasks found",
+                content = { @Content(mediaType = "application/json",
+                        array = @ArraySchema(schema = @Schema(implementation = TaskResponseDto.class))) }),
+        @ApiResponse(responseCode = "403", description = "Access forbidden", content = @Content) }
+    )
     @GetMapping(path = "")
     public ResponseEntity<Object> getTasks(
-//            @Parameter(hidden = true)
+            @Parameter(
+                    description = "Filter parameters",
+                    in = ParameterIn.QUERY,
+                    example = "authorId=1&executorId=3&status=NEW")
             @QuerydslPredicate(root = Task.class) Predicate predicate,
+            @Parameter(
+                    description = "Page number, page size and sort type",
+                    in = ParameterIn.QUERY,
+                    example = "page=0&size=3&sort=id,desc")
             @PageableDefault(sort = "id") Pageable pageable
     ) {
         return ResponseEntity.ok(taskService.getTasks(predicate, pageable));
     }
 
-
-//    @Operation(summary = "Create a new task")
-//    @ApiResponses(value = {
-//        @ApiResponse(responseCode = "201", description = "Task successfully created",
-//                content = { @Content(mediaType = "application/json",
-//                        schema = @Schema(implementation = Task.class)) }),
-//        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-//        @ApiResponse(responseCode = "422", description = "Wrong data provided",
-//                content = { @Content(mediaType = "application/json",
-//                        array = @ArraySchema(schema = @Schema(implementation = String.class))) }),
-//        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content) })
+    @Operation(summary = "Create a new task")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Task successfully created",
+                content = { @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = TaskResponseDto.class)) }),
+        @ApiResponse(responseCode = "400", description = "Wrong data provided",
+                content = { @Content(mediaType = "application/json",
+                        array = @ArraySchema(schema = @Schema(implementation = String.class))) }) }
+    )
     @PostMapping(path = "")
     public ResponseEntity<Object> createTask(
             @Valid @RequestBody TaskDto taskDto
@@ -92,30 +97,40 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(taskDto));
     }
 
-//    @Operation(summary = "Update task data by task's ID")
-//    @ApiResponses(value = {
-//        @ApiResponse(responseCode = "200", description = "Task data successfully updated",
-//            content = { @Content(mediaType = "application/json",
-//                        schema = @Schema(implementation = Task.class)) }),
-//        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-//        @ApiResponse(responseCode = "403", description = "Access forbidden", content = @Content),
-//        @ApiResponse(responseCode = "404", description = "Task not found", content = @Content),
-//        @ApiResponse(responseCode = "422", description = "Wrong data provided",
-//            content = { @Content(mediaType = "application/json",
-//                        array = @ArraySchema(schema = @Schema(implementation = String.class))) }),
-//        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content) })
+    @Operation(summary = "Update task data by task's ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Task data successfully updated",
+            content = { @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = TaskResponseDto.class)) }),
+        @ApiResponse(responseCode = "400", description = "Wrong data provided",
+            content = { @Content(mediaType = "application/json",
+                        array = @ArraySchema(schema = @Schema(implementation = String.class))) }),
+        @ApiResponse(responseCode = "403", description = "Access forbidden", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Task not found", content = @Content) }
+    )
     @PutMapping(path = "/{id}")
     public ResponseEntity<Object> updateTask(
-//            @Parameter(description = "ID of a task to be updated")
+            @Parameter(description = "ID of a task to be updated")
             @PathVariable Long id,
             @Valid @RequestBody TaskDto taskDto
     ) {
         return ResponseEntity.ok(taskService.updateTask(id, taskDto));
     }
 
+    @Operation(summary = "Update task status by task's ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Task status successfully updated",
+                content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskResponseDto.class)) }),
+        @ApiResponse(responseCode = "400", description = "Wrong data provided",
+                content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = String.class))) }),
+        @ApiResponse(responseCode = "403", description = "Access forbidden", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Task not found", content = @Content) }
+    )
     @PatchMapping(path = "/{id}/status")
     public ResponseEntity<Object> updateTaskStatus(
-//            @Parameter(description = "ID of a task to be updated")
+            @Parameter(description = "ID of a task to be updated")
             @PathVariable Long id,
             @RequestBody Map<String, String> requestBody
     ) {
@@ -123,28 +138,37 @@ public class TaskController {
         return ResponseEntity.ok(taskService.updateTaskStatus(id, newStatus));
     }
 
-    @PatchMapping(path = "/{id}/performer")
-    public ResponseEntity<Object> updatePerformer(
-//            @Parameter(description = "ID of a task to be updated")
+    @Operation(summary = "Assign task executor by task's ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Task executor successfully assigned",
+                content = { @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = TaskResponseDto.class)) }),
+        @ApiResponse(responseCode = "400", description = "Wrong data provided",
+                content = { @Content(mediaType = "application/json",
+                        array = @ArraySchema(schema = @Schema(implementation = String.class))) }),
+        @ApiResponse(responseCode = "403", description = "Access forbidden", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Task not found", content = @Content) }
+    )
+    @PatchMapping(path = "/{id}/executor")
+    public ResponseEntity<Object> updateExecutor(
+            @Parameter(description = "ID of a task to be updated")
             @PathVariable Long id,
             @RequestBody Map<String, Long> requestBody
     ) {
-        Long newPerformerId = requestBody.get("performerId");
-        return ResponseEntity.ok(taskService.updatePerformer(id, newPerformerId));
+        Long newExecutorId = requestBody.get("executorId");
+        return ResponseEntity.ok(taskService.updateExecutor(id, newExecutorId));
     }
 
-//    @Operation(summary = "Delete a task by its ID")
-//    @ApiResponses(value = {
-//        @ApiResponse(responseCode = "200", description = "Task deleted", content = @Content),
-//        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
-//        @ApiResponse(responseCode = "403", description = "Access forbidden", content = @Content),
-//        @ApiResponse(responseCode = "404", description = "Task not found",
-//                content = { @Content(schema = @Schema(implementation = String.class)) }),
-//        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
-//    })
+    @Operation(summary = "Delete a task by its ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Task deleted", content = @Content),
+        @ApiResponse(responseCode = "403", description = "Access forbidden", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Task not found",
+                content = { @Content(schema = @Schema(implementation = String.class)) }) }
+    )
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Object> deleteTask(
-//            @Parameter(description = "ID of a task to be deleted")
+            @Parameter(description = "ID of a task to be deleted")
             @PathVariable Long id
     ) {
         taskService.deleteTask(id);

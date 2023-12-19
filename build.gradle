@@ -55,7 +55,7 @@ tasks.named('test') {
 }
 
 openApi {
-    apiDocsUrl.set("http://localhost:8080/v3/api-docs")
+    apiDocsUrl.set("http://localhost:8080/docs/v3/api-docs")
 }
 
 checkstyle {
