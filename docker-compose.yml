@@ -1,0 +1,26 @@
+version: "3.3"
+services:
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - task-manager
+    environment:
+      DB_HOST: db
+
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    networks:
+      - task-manager
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+networks:
+  task-manager:
+    driver: bridge

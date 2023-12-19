@@ -1,19 +1,17 @@
-#server:
-#  error:
-#    include-stacktrace: on_param
-#    include-message: on_param
-
 spring:
   datasource:
-    url: jdbc:h2:mem:app-db
-    username:
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+#    url: jdbc:h2:mem:app-db
+#    username:
+#    password:
+#    driver-class-name: org.h2.Driver
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: true
-    database: h2
 
 logging:
   level:
